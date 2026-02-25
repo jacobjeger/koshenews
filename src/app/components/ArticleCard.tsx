@@ -1,62 +1,162 @@
 "use client";
 
-import { Article, CATEGORY_COLORS } from "@/lib/types";
+import { Article, CATEGORY_LABELS } from "@/lib/types";
 
 interface ArticleCardProps {
   article: Article;
+  variant?: "hero" | "standard" | "compact";
 }
 
-function timeAgo(dateString: string): string {
-  const now = new Date();
+function formatTime(dateString: string): string {
   const date = new Date(dateString);
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
 
-  if (seconds < 60) return "just now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} min ago`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 12) return `${diffHours}h ago`;
+
+  if (date.toDateString() === now.toDateString()) {
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
-export default function ArticleCard({ article }: ArticleCardProps) {
-  const categoryColor =
-    CATEGORY_COLORS[article.category] || "bg-gray-100 text-gray-800";
-
+function BreakingTag() {
   return (
-    <article className="card">
-      <div className="flex items-center gap-2 mb-2">
-        {article.is_breaking && <span className="breaking-badge">Breaking</span>}
-        <span className={`category-tag ${categoryColor}`}>
-          {article.category}
-        </span>
-        <span className="text-xs text-gray-400 ml-auto">
-          {timeAgo(article.created_at)}
-        </span>
+    <span className="inline-flex items-center gap-1 text-accent font-semibold text-caption uppercase tracking-widest">
+      <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+      Breaking
+    </span>
+  );
+}
+
+function CategoryLabel({ category }: { category: string }) {
+  return (
+    <span className="text-caption font-semibold uppercase tracking-widest text-ink-400">
+      {CATEGORY_LABELS[category] || category}
+    </span>
+  );
+}
+
+function SourceLine({ sources, time }: { sources: string[]; time: string }) {
+  return (
+    <div className="flex items-center gap-1.5 text-caption text-ink-400">
+      <span>{sources.join(", ")}</span>
+      <span className="text-ink-200">/</span>
+      <time>{formatTime(time)}</time>
+    </div>
+  );
+}
+
+export default function ArticleCard({
+  article,
+  variant = "standard",
+}: ArticleCardProps) {
+  const paragraphs = article.summary.split("\n\n");
+
+  if (variant === "hero") {
+    return (
+      <article className="pb-8 mb-8 border-b border-ink-200">
+        {/* Category + Breaking */}
+        <div className="flex items-center gap-3 mb-3">
+          <CategoryLabel category={article.category} />
+          {article.is_breaking && <BreakingTag />}
+        </div>
+
+        {/* Headline */}
+        <h2 className="font-serif text-headline-lg text-ink-950 mb-3">
+          {article.headline}
+        </h2>
+
+        {/* Lede paragraph — larger, bolder */}
+        {paragraphs.length > 0 && (
+          <p className="text-body-lg text-ink-700 mb-3 leading-relaxed">
+            {paragraphs[0]}
+          </p>
+        )}
+
+        {/* Remaining paragraphs */}
+        {paragraphs.length > 1 && (
+          <div className="text-body-md text-ink-600 space-y-2.5 mb-4">
+            {paragraphs.slice(1).map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        )}
+
+        <SourceLine sources={article.sources} time={article.created_at} />
+      </article>
+    );
+  }
+
+  if (variant === "compact") {
+    return (
+      <article className="py-4 border-b border-ink-100 last:border-b-0">
+        <div className="flex items-center gap-3 mb-1.5">
+          <CategoryLabel category={article.category} />
+          {article.is_breaking && <BreakingTag />}
+        </div>
+
+        <h3 className="font-serif text-headline-sm text-ink-900 mb-1.5">
+          {article.headline}
+        </h3>
+
+        <p className="text-body-sm text-ink-500 line-clamp-2 mb-2">
+          {paragraphs[0]}
+        </p>
+
+        <SourceLine sources={article.sources} time={article.created_at} />
+      </article>
+    );
+  }
+
+  // Standard card
+  return (
+    <article className="py-6 border-b border-ink-100">
+      <div className="flex items-center gap-3 mb-2">
+        <CategoryLabel category={article.category} />
+        {article.is_breaking && <BreakingTag />}
       </div>
 
-      <h2 className="text-base font-semibold leading-snug mb-2">
+      <h2 className="font-serif text-headline-md text-ink-950 mb-2">
         {article.headline}
       </h2>
 
-      <div className="text-sm text-gray-700 leading-relaxed space-y-2">
-        {article.summary.split("\n\n").map((paragraph, i) => (
-          <p key={i}>{paragraph}</p>
+      {/* Show first 2 paragraphs */}
+      <div className="text-body-md text-ink-600 space-y-2 mb-3">
+        {paragraphs.slice(0, 2).map((p, i) => (
+          <p key={i}>{p}</p>
         ))}
       </div>
 
-      <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
-        <span className="text-xs text-gray-400">
-          {article.sources.join(" · ")}
-        </span>
-        <span className="text-xs text-gray-400">
-          {new Date(article.published_at).toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-          })}
-        </span>
-      </div>
+      {/* Expandable remaining paragraphs */}
+      {paragraphs.length > 2 && (
+        <details className="group mb-3">
+          <summary className="text-body-sm text-ink-400 cursor-pointer hover:text-ink-600 transition-colors list-none">
+            <span className="border-b border-dotted border-ink-300 group-open:hidden">
+              Continue reading
+            </span>
+          </summary>
+          <div className="text-body-md text-ink-600 space-y-2 mt-2">
+            {paragraphs.slice(2).map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        </details>
+      )}
+
+      <SourceLine sources={article.sources} time={article.created_at} />
     </article>
   );
 }

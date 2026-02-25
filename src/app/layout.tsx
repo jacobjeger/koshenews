@@ -4,14 +4,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Kosher News — No opinion · No agenda · Just news",
   description:
-    "A frum-friendly AI news aggregator that delivers factual, filtered news summaries from trusted sources worldwide.",
+    "AI-curated news from trusted sources worldwide, filtered for a frum audience. Factual summaries with no opinion and no agenda.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#1a365d",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
