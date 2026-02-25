@@ -38,7 +38,7 @@ export default function Header() {
       <div className="border-b border-ink-100">
         <div className="max-w-content mx-auto px-5 py-2 flex items-center justify-between">
           <span className="text-caption text-ink-400 uppercase tracking-widest">
-            Updated every 10 minutes
+            Live
           </span>
           <span className="text-caption text-ink-400">
             <LiveClock />
