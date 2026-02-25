@@ -1,0 +1,12 @@
+[project]
+id = "your-project-ref"
+
+[api]
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+
+[functions.fetch-news]
+verify_jwt = false

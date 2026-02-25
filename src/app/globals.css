@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow;
+  }
+
+  .category-pill {
+    @apply px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer whitespace-nowrap;
+  }
+
+  .category-pill-active {
+    @apply bg-primary text-white;
+  }
+
+  .category-pill-inactive {
+    @apply bg-gray-100 text-gray-600 hover:bg-gray-200;
+  }
+
+  .breaking-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-breaking text-white uppercase tracking-wide;
+  }
+
+  .category-tag {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wide;
+  }
+}

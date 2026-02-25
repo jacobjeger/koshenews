@@ -1,0 +1,21 @@
+-- Enable required extensions for scheduled fetching
+-- Run these in the Supabase SQL editor (they require superuser privileges)
+
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
+-- CREATE EXTENSION IF NOT EXISTS pg_net;
+
+-- Schedule the edge function to run every 10 minutes
+-- Replace YOUR_PROJECT_REF and YOUR_SERVICE_ROLE_KEY with actual values
+--
+-- SELECT cron.schedule(
+--   'fetch-news',
+--   '*/10 * * * *',
+--   $$SELECT net.http_post(
+--     url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/fetch-news',
+--     headers := jsonb_build_object(
+--       'Authorization', 'Bearer YOUR_SERVICE_ROLE_KEY',
+--       'Content-Type', 'application/json'
+--     ),
+--     body := '{}'::jsonb
+--   );$$
+-- );
