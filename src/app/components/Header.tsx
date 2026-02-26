@@ -27,13 +27,18 @@ function LiveClock() {
 
 export default function Header() {
   const [showBriefing, setShowBriefing] = useState(false);
+  const [dateStr, setDateStr] = useState("");
 
-  const dateStr = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  useEffect(() => {
+    setDateStr(
+      new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    );
+  }, []);
 
   return (
     <>
@@ -67,7 +72,7 @@ export default function Header() {
           <div className="mt-1.5 flex items-center justify-center gap-3">
             <span className="h-px w-8 bg-ink-200" />
             <p className="text-caption text-ink-400 uppercase tracking-[0.2em]">
-              Clean &middot; Conservative &middot; Kosher
+              No opinion &middot; No agenda &middot; Just news
             </p>
             <span className="h-px w-8 bg-ink-200" />
           </div>
