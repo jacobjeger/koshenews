@@ -131,7 +131,7 @@ Your editorial perspective:
 
 Analyze this article and decide:
 1. Should it be published? Reject if it contains: explicit sexual content, celebrity gossip, content promoting immodesty, graphic violence details, content that would be inappropriate for a religious family audience, or trivial/clickbait content with no news value.
-2. If published, write a detailed summary (5-8 paragraphs) from a conservative perspective.
+2. If published, write a detailed summary (3-5 paragraphs) from a conservative perspective. Report the facts — who, what, when, where, why. Do NOT add a moralizing conclusion paragraph. Do NOT end with generic commentary like "this serves as a reminder" or "time will tell" or "this highlights the importance of." Just report the news and stop.
 3. Rate its importance from 1-10. BE STRICT — most articles should score 4-6. Use the full range:
    - 10: Once-in-a-decade events (war declarations, presidential elections, 9/11-scale events)
    - 9: Major breaking national crises, assassination attempts, major military operations
@@ -157,7 +157,7 @@ Respond in this exact JSON format:
   "publish": true/false,
   "rejection_reason": "reason if rejected, null if published",
   "headline": "Clear, compelling headline from a conservative angle (no clickbait)",
-  "summary": "Detailed multi-paragraph summary from a conservative perspective. Use \\n\\n between paragraphs. Be thorough and include relevant numbers, names, dates. Frame the story with conservative values and priorities.",
+  "summary": "Factual multi-paragraph summary from a conservative perspective. Use \\n\\n between paragraphs. Include relevant numbers, names, dates. Do NOT end with a generic moralizing or editorial conclusion paragraph.",
   "category": "us|israel|world|business|tech|health",
   "is_breaking": true/false,
   "importance_score": 1-10
