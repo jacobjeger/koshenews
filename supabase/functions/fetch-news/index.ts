@@ -132,6 +132,12 @@ Your editorial perspective:
 Analyze this article and decide:
 1. Should it be published? Reject if it contains: explicit sexual content, celebrity gossip, content promoting immodesty, graphic violence details, content that would be inappropriate for a religious family audience, or trivial/clickbait content with no news value.
 2. If published, write a detailed summary (5-8 paragraphs) from a conservative perspective.
+3. Rate its importance from 1-10:
+   - 9-10: Major breaking events, war/conflict escalations, major policy changes, elections
+   - 7-8: Significant national/international news, important legislation, major economic shifts
+   - 5-6: Standard news, routine political coverage, regional stories
+   - 3-4: Minor news, soft features, local interest
+   - 1-2: Filler, low-impact stories
 
 Article title: ${article.original_title}
 Article source: ${article.source_name}
@@ -147,7 +153,8 @@ Respond in this exact JSON format:
   "headline": "Clear, compelling headline from a conservative angle (no clickbait)",
   "summary": "Detailed multi-paragraph summary from a conservative perspective. Use \\n\\n between paragraphs. Be thorough and include relevant numbers, names, dates. Frame the story with conservative values and priorities.",
   "category": "us|israel|world|business|tech|health",
-  "is_breaking": true/false
+  "is_breaking": true/false,
+  "importance_score": 1-10
 }`;
 
   try {
@@ -193,6 +200,7 @@ Respond in this exact JSON format:
           category: result.category,
           sources: [article.source_name],
           is_breaking: result.is_breaking,
+          importance_score: result.importance_score || 5,
           published_at: article.published_at || new Date().toISOString(),
         });
       }

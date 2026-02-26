@@ -20,11 +20,19 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from("articles")
     .select("*")
-    .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (category && category !== "all") {
-    query = query.eq("category", category);
+    // Category view: show all articles in that category, newest first
+    query = query
+      .eq("category", category)
+      .order("created_at", { ascending: false });
+  } else {
+    // Top Stories: only important articles, ranked by importance then recency
+    query = query
+      .gte("importance_score", 6)
+      .order("importance_score", { ascending: false })
+      .order("created_at", { ascending: false });
   }
 
   const { data, error } = await query;

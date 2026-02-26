@@ -6,6 +6,7 @@ export interface Article {
   category: "us" | "israel" | "world" | "business" | "tech" | "health";
   sources: string[];
   is_breaking: boolean;
+  importance_score: number;
   published_at: string;
   created_at: string;
 }
