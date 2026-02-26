@@ -33,16 +33,7 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
   useEffect(() => {
     const fetchBriefing = async () => {
       try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        const res = await fetch(
-          `${supabaseUrl}/functions/v1/daily-briefing`,
-          {
-            headers: {
-              Authorization: `Bearer ${anonKey}`,
-            },
-          }
-        );
+        const res = await fetch("/api/briefing");
         if (!res.ok) throw new Error("Failed to load briefing");
         const json: BriefingData = await res.json();
         setData(json);
@@ -137,17 +128,23 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
                 {data.briefing.split("\n").map((line, i) => {
                   const trimmed = line.trim();
                   if (!trimmed) return null;
-                  if (trimmed.startsWith(">")) {
+
+                  // Strip markdown bold markers for display
+                  const clean = trimmed.replace(/\*\*/g, "");
+
+                  // Detect bullet lines (>, -, or •)
+                  const bulletMatch = clean.match(/^[>\-•]\s*(.+)/);
+                  if (bulletMatch) {
                     return (
                       <div key={i} className="flex gap-2.5 pl-1">
                         <span className="text-accent font-bold shrink-0 mt-0.5">
                           &#x2022;
                         </span>
-                        <p>{trimmed.slice(1).trim()}</p>
+                        <p>{bulletMatch[1]}</p>
                       </div>
                     );
                   }
-                  return <p key={i}>{trimmed}</p>;
+                  return <p key={i}>{clean}</p>;
                 })}
               </div>
               {data.article_count > 0 && (

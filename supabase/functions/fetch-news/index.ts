@@ -132,12 +132,18 @@ Your editorial perspective:
 Analyze this article and decide:
 1. Should it be published? Reject if it contains: explicit sexual content, celebrity gossip, content promoting immodesty, graphic violence details, content that would be inappropriate for a religious family audience, or trivial/clickbait content with no news value.
 2. If published, write a detailed summary (5-8 paragraphs) from a conservative perspective.
-3. Rate its importance from 1-10:
-   - 9-10: Major breaking events, war/conflict escalations, major policy changes, elections
-   - 7-8: Significant national/international news, important legislation, major economic shifts
-   - 5-6: Standard news, routine political coverage, regional stories
-   - 3-4: Minor news, soft features, local interest
-   - 1-2: Filler, low-impact stories
+3. Rate its importance from 1-10. BE STRICT — most articles should score 4-6. Use the full range:
+   - 10: Once-in-a-decade events (war declarations, presidential elections, 9/11-scale events)
+   - 9: Major breaking national crises, assassination attempts, major military operations
+   - 8: Very significant stories that will be front-page news everywhere (major legislation passed, significant terror attacks, landmark court rulings)
+   - 7: Important national/international news with broad impact (major policy announcements, significant diplomatic events, large-scale economic data)
+   - 6: Notable news worth covering prominently (meaningful political developments, significant business/tech news, important regional events)
+   - 5: Standard news coverage (routine political statements, typical economic updates, standard international coverage)
+   - 4: Below-average importance (minor political developments, routine government activity, local events)
+   - 3: Low importance (minor incidents, routine updates, niche interest stories)
+   - 2-1: Very low importance (filler content, trivial updates)
+
+   IMPORTANT: The average article should score 5. Only 1 in 10 articles should score 8+. Be discriminating.
 
 Article title: ${article.original_title}
 Article source: ${article.source_name}
