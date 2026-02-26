@@ -1,5 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const corsHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -7,7 +14,12 @@ const supabase = createClient(
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY")!;
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   try {
     const today = new Date().toLocaleDateString("en-CA", {
       timeZone: "America/New_York",
@@ -28,12 +40,7 @@ Deno.serve(async (_req) => {
           generated_at: existing.generated_at,
           cached: true,
         }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
+        { headers: corsHeaders }
       );
     }
 
@@ -56,12 +63,7 @@ Deno.serve(async (_req) => {
           generated_at: new Date().toISOString(),
           cached: false,
         }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
+        { headers: corsHeaders }
       );
     }
 
@@ -120,23 +122,12 @@ ${articleList}`;
         generated_at: new Date().toISOString(),
         cached: false,
       }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
+      { headers: corsHeaders }
     );
   } catch (err) {
     return new Response(
       JSON.stringify({ error: (err as Error).message }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
+      { status: 500, headers: corsHeaders }
     );
   }
 });

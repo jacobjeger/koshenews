@@ -28,9 +28,8 @@ export async function GET(request: NextRequest) {
       .eq("category", category)
       .order("created_at", { ascending: false });
   } else {
-    // Top Stories: only important articles, ranked by importance then recency
+    // Top Stories: ranked by importance then recency (most important first)
     query = query
-      .gte("importance_score", 6)
       .order("importance_score", { ascending: false })
       .order("created_at", { ascending: false });
   }

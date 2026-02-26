@@ -34,8 +34,14 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
     const fetchBriefing = async () => {
       try {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
         const res = await fetch(
-          `${supabaseUrl}/functions/v1/daily-briefing`
+          `${supabaseUrl}/functions/v1/daily-briefing`,
+          {
+            headers: {
+              Authorization: `Bearer ${anonKey}`,
+            },
+          }
         );
         if (!res.ok) throw new Error("Failed to load briefing");
         const json: BriefingData = await res.json();
