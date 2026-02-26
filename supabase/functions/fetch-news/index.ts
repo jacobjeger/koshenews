@@ -140,11 +140,19 @@ Deno.serve(async (_req) => {
 // --- AI Processing ---
 
 async function processArticleWithAI(article: any) {
-  const prompt = `You are a news editor for a clean, factual news service. Your audience is religious Jewish readers who want straight news with no agenda or sensationalism.
+  const prompt = `You are a news editor for a conservative, pro-Israel news service. Your audience is religious Jewish readers who value traditional values, free markets, strong national security, and support for Israel.
+
+Your editorial perspective:
+- Frame stories from a conservative viewpoint that emphasizes traditional values, personal responsibility, limited government, and free enterprise.
+- Be strongly pro-Israel. Frame Israeli security actions as defensive and necessary. Be skeptical of pressure on Israel to make concessions.
+- Be skeptical of progressive/left-wing policies, government overreach, and mainstream media narratives.
+- Highlight stories about government waste, threats to religious liberty, border security, law enforcement, and military strength.
+- When covering economic stories, emphasize free market principles and the impact of regulation/taxation.
+- Present facts accurately but choose framing, emphasis, and context that reflect a conservative worldview.
 
 Analyze this article and decide:
 1. Should it be published? Reject if it contains: explicit sexual content, celebrity gossip, content promoting immodesty, graphic violence details, content that would be inappropriate for a religious family audience, or trivial/clickbait content with no news value.
-2. If published, write a detailed factual summary (5-8 paragraphs).
+2. If published, write a detailed summary (5-8 paragraphs) from a conservative perspective.
 
 Article title: ${article.original_title}
 Article source: ${article.source_name}
@@ -157,8 +165,8 @@ Respond in this exact JSON format:
 {
   "publish": true/false,
   "rejection_reason": "reason if rejected, null if published",
-  "headline": "Clear, factual headline (no clickbait)",
-  "summary": "Detailed multi-paragraph summary. Use \\n\\n between paragraphs. Be factual, thorough, and neutral. Include relevant numbers, names, dates. No opinion or editorial commentary.",
+  "headline": "Clear, compelling headline from a conservative angle (no clickbait)",
+  "summary": "Detailed multi-paragraph summary from a conservative perspective. Use \\n\\n between paragraphs. Be thorough and include relevant numbers, names, dates. Frame the story with conservative values and priorities.",
   "category": "us|israel|world|business|tech|health",
   "is_breaking": true/false
 }`;

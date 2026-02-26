@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Article, Category } from "@/lib/types";
 import ArticleCard from "./ArticleCard";
+import ArticleModal from "./ArticleModal";
 import CategoryFilter from "./CategoryFilter";
 
 const PAGE_SIZE = 20;
@@ -65,6 +66,7 @@ export default function ArticleFeed() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const fetchArticles = useCallback(
@@ -139,7 +141,11 @@ export default function ArticleFeed() {
       ) : (
         <main className="max-w-content mx-auto px-5 pt-8 pb-16">
           {/* Hero: first article gets prominent treatment */}
-          <ArticleCard article={articles[0]} variant="hero" />
+          <ArticleCard
+            article={articles[0]}
+            variant="hero"
+            onClick={() => setSelectedArticle(articles[0])}
+          />
 
           {/* Remaining articles */}
           {articles.slice(1).map((article, i) => (
@@ -147,6 +153,7 @@ export default function ArticleFeed() {
               key={article.id}
               article={article}
               variant={i < 4 ? "standard" : "compact"}
+              onClick={() => setSelectedArticle(article)}
             />
           ))}
 
@@ -164,6 +171,14 @@ export default function ArticleFeed() {
         </main>
       )}
 
+      {/* Article Modal */}
+      {selectedArticle && (
+        <ArticleModal
+          article={selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+        />
+      )}
+
       {/* Footer */}
       <footer className="border-t border-ink-200">
         <div className="max-w-content mx-auto px-5 py-6 text-center">
@@ -171,7 +186,7 @@ export default function ArticleFeed() {
             Kosher News
           </p>
           <p className="text-caption text-ink-400 mt-1">
-            No opinion &middot; No agenda &middot; Just news
+            Clean &middot; Conservative &middot; Kosher
           </p>
           <p className="text-caption text-ink-300 mt-3">
             AI-curated from trusted sources worldwide. Summaries are
