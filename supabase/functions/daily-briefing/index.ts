@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       timeZone: "America/New_York",
     });
 
-    // Check cache first
+    // Check cache — serve if less than 1 hour old
     const { data: existing } = await supabase
       .from("daily_briefings")
       .select("*")
@@ -33,15 +33,19 @@ Deno.serve(async (req) => {
       .single();
 
     if (existing) {
-      return new Response(
-        JSON.stringify({
-          briefing: existing.content,
-          article_count: existing.article_count,
-          generated_at: existing.generated_at,
-          cached: true,
-        }),
-        { headers: corsHeaders }
-      );
+      const ageMs = Date.now() - new Date(existing.generated_at).getTime();
+      const ONE_HOUR = 60 * 60 * 1000;
+      if (ageMs < ONE_HOUR) {
+        return new Response(
+          JSON.stringify({
+            briefing: existing.content,
+            article_count: existing.article_count,
+            generated_at: existing.generated_at,
+            cached: true,
+          }),
+          { headers: corsHeaders }
+        );
+      }
     }
 
     // Fetch today's top articles (last 24 hours, highest importance)
@@ -108,12 +112,16 @@ ${articleList}`;
     const data = await response.json();
     const briefingContent = data.choices[0].message.content;
 
-    // Cache the briefing
-    await supabase.from("daily_briefings").insert({
-      briefing_date: today,
-      content: briefingContent,
-      article_count: articles.length,
-    });
+    // Cache the briefing (upsert so hourly refresh overwrites the old one)
+    await supabase.from("daily_briefings").upsert(
+      {
+        briefing_date: today,
+        content: briefingContent,
+        article_count: articles.length,
+        generated_at: new Date().toISOString(),
+      },
+      { onConflict: "briefing_date" }
+    );
 
     return new Response(
       JSON.stringify({

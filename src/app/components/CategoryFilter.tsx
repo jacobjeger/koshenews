@@ -12,7 +12,7 @@ export default function CategoryFilter({
   onSelect,
 }: CategoryFilterProps) {
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-ink-200">
+    <nav className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-ink-200">
       <div className="max-w-content mx-auto px-6">
         <div className="flex overflow-x-auto no-scrollbar -mb-px">
           {CATEGORIES.map((cat) => {
