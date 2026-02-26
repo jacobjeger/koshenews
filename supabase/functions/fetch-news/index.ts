@@ -96,15 +96,37 @@ Deno.serve(async (_req) => {
       }
     }
 
-    // 3. Process new articles through AI
-    for (const article of newArticles) {
+    // 3. Also pick up any previously unprocessed raw articles
+    const { data: unprocessed } = await supabase
+      .from("raw_articles")
+      .select("*, sources!inner(name, category_hint)")
+      .eq("processed", false)
+      .eq("rejected", false)
+      .order("fetched_at", { ascending: true })
+      .limit(50);
+
+    const toProcess = [
+      ...newArticles,
+      ...(unprocessed || [])
+        .filter((r: any) => !newArticles.some((n: any) => n.id === r.id))
+        .map((r: any) => ({
+          ...r,
+          source_name: r.sources?.name || "Unknown",
+          category_hint: r.sources?.category_hint || "general",
+        })),
+    ];
+
+    // 4. Process articles through AI
+    let processed = 0;
+    for (const article of toProcess) {
       await processArticleWithAI(article);
+      processed++;
       // Small delay to avoid rate limiting
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     return new Response(
-      JSON.stringify({ processed: newArticles.length }),
+      JSON.stringify({ processed }),
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
