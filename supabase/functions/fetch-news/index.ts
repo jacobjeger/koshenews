@@ -7,6 +7,10 @@ const supabase = createClient(
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY")!;
 
+// Limits to stay within Supabase Edge Function compute budget
+const ARTICLES_PER_SOURCE = 5;
+const MAX_AI_BATCH = 8;
+
 Deno.serve(async (_req) => {
   try {
     // 1. Get all active sources
@@ -15,18 +19,21 @@ Deno.serve(async (_req) => {
       .select("*")
       .eq("active", true);
 
-    // 2. Fetch RSS feeds and collect new articles
-    const newArticles: any[] = [];
+    // 2. Fetch RSS feeds and store new raw articles
+    let fetched = 0;
 
     for (const source of sources || []) {
       try {
         const response = await fetch(source.feed_url, {
           headers: { "User-Agent": "KosherNews/1.0" },
+          signal: AbortSignal.timeout(5000),
         });
         const xml = await response.text();
         const items = parseRSSItems(xml);
 
-        for (const item of items.slice(0, 10)) {
+        for (const item of items.slice(0, ARTICLES_PER_SOURCE)) {
+          if (!item.link) continue;
+
           // Check if we already have this URL
           const { data: existing } = await supabase
             .from("raw_articles")
@@ -35,41 +42,22 @@ Deno.serve(async (_req) => {
             .single();
 
           if (!existing) {
-            // Try to extract full article text
-            let fullText = item.description || "";
+            // Use RSS description only (skip full article fetch to save time)
+            const content = (item.description || "").slice(0, 10000);
 
-            try {
-              const articleResponse = await fetch(item.link, {
-                headers: { "User-Agent": "KosherNews/1.0" },
-                signal: AbortSignal.timeout(10000),
-              });
-              const html = await articleResponse.text();
-              fullText = extractArticleText(html) || fullText;
-            } catch {
-              // Use RSS content if article fetch fails
-            }
-
-            const { data: inserted } = await supabase
+            await supabase
               .from("raw_articles")
               .insert({
                 source_id: source.id,
                 original_url: item.link,
                 original_title: item.title,
-                original_content: fullText.slice(0, 10000),
+                original_content: content,
                 published_at: item.pubDate
                   ? new Date(item.pubDate).toISOString()
                   : null,
-              })
-              .select()
-              .single();
-
-            if (inserted) {
-              newArticles.push({
-                ...inserted,
-                source_name: source.name,
-                category_hint: source.category_hint,
               });
-            }
+
+            fetched++;
           }
         }
 
@@ -84,49 +72,40 @@ Deno.serve(async (_req) => {
       } catch (err) {
         console.error(`Error fetching ${source.name}:`, (err as Error).message);
 
-        // Increment error count; disable source after 3 consecutive failures
+        // Increment error count; disable source after 5 consecutive failures
         const newErrorCount = (source.error_count || 0) + 1;
         await supabase
           .from("sources")
           .update({
             error_count: newErrorCount,
-            active: newErrorCount < 3,
+            active: newErrorCount < 5,
           })
           .eq("id", source.id);
       }
     }
 
-    // 3. Also pick up any previously unprocessed raw articles
+    // 3. Process a small batch of unprocessed articles through AI
     const { data: unprocessed } = await supabase
       .from("raw_articles")
       .select("*, sources!inner(name, category_hint)")
       .eq("processed", false)
       .eq("rejected", false)
       .order("fetched_at", { ascending: true })
-      .limit(50);
+      .limit(MAX_AI_BATCH);
 
-    const toProcess = [
-      ...newArticles,
-      ...(unprocessed || [])
-        .filter((r: any) => !newArticles.some((n: any) => n.id === r.id))
-        .map((r: any) => ({
-          ...r,
-          source_name: r.sources?.name || "Unknown",
-          category_hint: r.sources?.category_hint || "general",
-        })),
-    ];
-
-    // 4. Process articles through AI
     let processed = 0;
-    for (const article of toProcess) {
+    for (const raw of unprocessed || []) {
+      const article = {
+        ...raw,
+        source_name: raw.sources?.name || "Unknown",
+        category_hint: raw.sources?.category_hint || "general",
+      };
       await processArticleWithAI(article);
       processed++;
-      // Small delay to avoid rate limiting
-      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     return new Response(
-      JSON.stringify({ processed }),
+      JSON.stringify({ fetched, processed }),
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
