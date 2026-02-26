@@ -37,7 +37,7 @@ export default function BreakingBanner() {
       {/* Animated pulse bar */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
 
-      <div className="max-w-content mx-auto px-5 py-2.5 flex items-center gap-3">
+      <div className="max-w-content mx-auto px-6 py-2.5 flex items-center gap-3">
         {/* Breaking badge */}
         <span className="shrink-0 flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest">
           <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
@@ -55,16 +55,16 @@ export default function BreakingBanner() {
         {/* Dismiss */}
         <button
           onClick={() => setDismissed(true)}
-          className="shrink-0 text-white/70 hover:text-white transition-colors ml-2"
+          className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-all ml-1"
           aria-label="Dismiss"
         >
           <svg
-            width="14"
-            height="14"
+            width="12"
+            height="12"
             viewBox="0 0 14 14"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             strokeLinecap="round"
           >
             <path d="M1 1l12 12M13 1L1 13" />

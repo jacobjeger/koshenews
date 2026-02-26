@@ -44,18 +44,18 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
 
       {/* Modal */}
       <div
-        className="relative bg-white w-full max-w-2xl mx-4 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto rounded-sm shadow-2xl"
+        className="relative bg-white w-full max-w-2xl mx-4 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto rounded-lg shadow-modal animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center text-ink-400 hover:text-ink-700 transition-colors"
+          className="absolute top-5 right-5 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-ink-50 text-ink-400 hover:bg-ink-100 hover:text-ink-700 transition-all"
           aria-label="Close"
         >
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 14 14"
             fill="none"
             stroke="currentColor"
@@ -66,14 +66,14 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
           </svg>
         </button>
 
-        <div className="px-8 py-8">
+        <div className="px-8 sm:px-10 py-10">
           {/* Category + Breaking */}
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-caption font-semibold uppercase tracking-widest text-ink-400">
+            <span className="text-caption font-semibold uppercase tracking-widest text-accent/70">
               {CATEGORY_LABELS[article.category] || article.category}
             </span>
             {article.is_breaking && (
-              <span className="inline-flex items-center gap-1 text-accent font-semibold text-caption uppercase tracking-widest">
+              <span className="inline-flex items-center gap-1.5 text-accent font-semibold text-caption uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                 Breaking
               </span>
@@ -81,19 +81,19 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-headline-lg text-ink-950 mb-4 pr-8">
+          <h1 className="font-serif text-headline-xl text-ink-950 mb-5 pr-8 leading-snug">
             {article.headline}
           </h1>
 
           {/* Meta line */}
-          <div className="flex items-center gap-1.5 text-body-sm text-ink-400 mb-6 pb-6 border-b border-ink-100">
+          <div className="flex items-center gap-2 text-body-sm text-ink-400 mb-8 pb-8 border-b border-ink-100 font-medium">
             <span>{article.sources.join(", ")}</span>
-            <span className="text-ink-200">/</span>
+            <span className="text-ink-200">&middot;</span>
             <time>{formatDate(article.created_at)}</time>
           </div>
 
           {/* Full article body */}
-          <div className="text-body-md text-ink-700 space-y-4 leading-relaxed">
+          <div className="text-body-lg text-ink-700 space-y-5 leading-[1.8]">
             {paragraphs.map((p, i) => (
               <p key={i}>{p}</p>
             ))}

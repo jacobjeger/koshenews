@@ -10,13 +10,13 @@ const PAGE_SIZE = 20;
 
 function LoadingSkeleton() {
   return (
-    <div className="max-w-content mx-auto px-5 pt-8">
+    <div className="max-w-content mx-auto px-6 pt-10">
       {/* Hero skeleton */}
-      <div className="pb-8 mb-8 border-b border-ink-100 animate-pulse">
-        <div className="h-3 w-16 bg-ink-100 rounded mb-4" />
-        <div className="h-7 w-full bg-ink-100 rounded mb-2" />
-        <div className="h-7 w-3/4 bg-ink-100 rounded mb-4" />
-        <div className="space-y-2.5">
+      <div className="pb-10 mb-8 border-b border-ink-100 animate-pulse">
+        <div className="h-3 w-20 bg-ink-100 rounded mb-5" />
+        <div className="h-8 w-full bg-ink-100 rounded mb-3" />
+        <div className="h-8 w-3/4 bg-ink-100 rounded mb-5" />
+        <div className="space-y-3">
           <div className="h-4 w-full bg-ink-50 rounded" />
           <div className="h-4 w-full bg-ink-50 rounded" />
           <div className="h-4 w-5/6 bg-ink-50 rounded" />
@@ -27,16 +27,15 @@ function LoadingSkeleton() {
       {[...Array(4)].map((_, i) => (
         <div
           key={i}
-          className="py-6 border-b border-ink-100 animate-pulse"
+          className="py-7 border-b border-ink-100 animate-pulse"
           style={{ animationDelay: `${i * 100}ms` }}
         >
           <div className="h-3 w-20 bg-ink-100 rounded mb-3" />
           <div className="h-5 w-5/6 bg-ink-100 rounded mb-2" />
-          <div className="h-5 w-2/3 bg-ink-100 rounded mb-3" />
-          <div className="space-y-2">
-            <div className="h-3.5 w-full bg-ink-50 rounded" />
-            <div className="h-3.5 w-full bg-ink-50 rounded" />
-            <div className="h-3.5 w-4/5 bg-ink-50 rounded" />
+          <div className="h-5 w-2/3 bg-ink-100 rounded mb-4" />
+          <div className="space-y-2.5">
+            <div className="h-4 w-full bg-ink-50 rounded" />
+            <div className="h-4 w-4/5 bg-ink-50 rounded" />
           </div>
         </div>
       ))}
@@ -46,12 +45,12 @@ function LoadingSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="max-w-content mx-auto px-5 py-20 text-center">
+    <div className="max-w-content mx-auto px-6 py-24 text-center">
       <div className="w-12 h-px bg-ink-200 mx-auto mb-6" />
-      <p className="font-serif text-xl text-ink-700 mb-2">
+      <p className="font-serif text-xl text-ink-700 mb-3">
         No stories yet
       </p>
-      <p className="text-body-sm text-ink-400 max-w-xs mx-auto">
+      <p className="text-body-sm text-ink-400 max-w-xs mx-auto leading-relaxed">
         Articles will appear here once the news pipeline is running. Check
         back soon.
       </p>
@@ -139,7 +138,7 @@ export default function ArticleFeed() {
       ) : articles.length === 0 ? (
         <EmptyState />
       ) : (
-        <main className="max-w-content mx-auto px-5 pt-8 pb-16">
+        <main className="max-w-content mx-auto px-6 pt-10 pb-20">
           {/* Hero: first article gets prominent treatment */}
           <ArticleCard
             article={articles[0]}
@@ -161,9 +160,9 @@ export default function ArticleFeed() {
           <div ref={sentinelRef} className="h-px" />
 
           {loadingMore && (
-            <div className="py-8 text-center">
-              <div className="inline-flex items-center gap-2 text-body-sm text-ink-400">
-                <span className="w-3 h-3 border-2 border-ink-200 border-t-ink-500 rounded-full animate-spin" />
+            <div className="py-10 text-center">
+              <div className="inline-flex items-center gap-2.5 text-body-sm text-ink-400 font-medium">
+                <span className="w-3.5 h-3.5 border-2 border-ink-200 border-t-ink-500 rounded-full animate-spin" />
                 Loading more stories
               </div>
             </div>
@@ -180,15 +179,15 @@ export default function ArticleFeed() {
       )}
 
       {/* Footer */}
-      <footer className="border-t border-ink-200">
-        <div className="max-w-content mx-auto px-5 py-6 text-center">
-          <p className="font-serif text-sm text-ink-700 font-semibold">
+      <footer className="border-t border-ink-100 bg-ink-50/40">
+        <div className="max-w-content mx-auto px-6 py-8 text-center">
+          <p className="font-serif text-base text-ink-800 font-semibold">
             Kosher News
           </p>
-          <p className="text-caption text-ink-400 mt-1">
+          <p className="text-caption text-ink-400 mt-1.5 font-medium tracking-wider">
             Clean &middot; Conservative &middot; Kosher
           </p>
-          <p className="text-caption text-ink-300 mt-3">
+          <p className="text-caption text-ink-300 mt-4 max-w-sm mx-auto leading-relaxed">
             AI-curated from trusted sources worldwide. Summaries are
             generated — always refer to original reporting for full
             context.

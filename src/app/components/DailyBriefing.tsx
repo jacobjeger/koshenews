@@ -63,18 +63,18 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
 
       {/* Modal */}
       <div
-        className="relative bg-white w-full max-w-2xl mx-4 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto rounded-sm shadow-2xl"
+        className="relative bg-white w-full max-w-2xl mx-4 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto rounded-lg shadow-modal animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center text-ink-400 hover:text-ink-700 transition-colors"
+          className="absolute top-5 right-5 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-ink-50 text-ink-400 hover:bg-ink-100 hover:text-ink-700 transition-all"
           aria-label="Close"
         >
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 14 14"
             fill="none"
             stroke="currentColor"
@@ -85,46 +85,47 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
           </svg>
         </button>
 
-        <div className="px-8 py-8">
+        <div className="px-8 sm:px-10 py-10">
           {/* Header */}
-          <div className="mb-6 pb-6 border-b border-ink-100">
+          <div className="mb-8 pb-8 border-b border-ink-100">
             <span className="text-caption font-semibold uppercase tracking-widest text-accent">
               Daily Briefing
             </span>
-            <h2 className="font-serif text-headline-lg text-ink-950 mt-2">
+            <h2 className="font-serif text-headline-xl text-ink-950 mt-2 leading-snug">
               Today&apos;s Top Stories
             </h2>
-            <p className="text-body-sm text-ink-400 mt-1">{dateStr}</p>
+            <p className="text-body-sm text-ink-400 mt-2 font-medium">{dateStr}</p>
           </div>
 
           {/* Content */}
           {loading ? (
             <div className="py-4">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-4 h-4 border-2 border-ink-200 border-t-ink-500 rounded-full animate-spin" />
-                <span className="text-body-sm text-ink-400">
+              <div className="flex items-center gap-3 mb-8">
+                <span className="w-4 h-4 border-2 border-ink-200 border-t-accent rounded-full animate-spin" />
+                <span className="text-body-sm text-ink-400 font-medium">
                   Generating your briefing...
                 </span>
               </div>
               <div className="space-y-4 animate-pulse">
-                <div className="h-4 w-full bg-ink-100 rounded" />
-                <div className="h-4 w-5/6 bg-ink-100 rounded" />
-                <div className="h-4 w-full bg-ink-100 rounded" />
-                <div className="h-4 w-4/5 bg-ink-100 rounded" />
-                <div className="h-4 w-full bg-ink-100 rounded" />
-                <div className="h-4 w-3/4 bg-ink-100 rounded" />
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-4 bg-ink-100 rounded"
+                    style={{ width: `${75 + Math.random() * 25}%` }}
+                  />
+                ))}
               </div>
             </div>
           ) : error ? (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <p className="text-body-md text-ink-500">
                 Unable to load today&apos;s briefing.
               </p>
-              <p className="text-body-sm text-ink-400 mt-1">{error}</p>
+              <p className="text-body-sm text-ink-400 mt-2">{error}</p>
             </div>
           ) : data ? (
             <div>
-              <div className="text-body-md text-ink-700 space-y-3 leading-relaxed">
+              <div className="text-body-md text-ink-700 space-y-4 leading-[1.75]">
                 {data.briefing.split("\n").map((line, i) => {
                   const trimmed = line.trim();
                   if (!trimmed) return null;
@@ -132,12 +133,12 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
                   // Strip markdown bold markers for display
                   const clean = trimmed.replace(/\*\*/g, "");
 
-                  // Detect bullet lines (>, -, or •)
+                  // Detect bullet lines (>, -, or bullet)
                   const bulletMatch = clean.match(/^[>\-•]\s*(.+)/);
                   if (bulletMatch) {
                     return (
-                      <div key={i} className="flex gap-2.5 pl-1">
-                        <span className="text-accent font-bold shrink-0 mt-0.5">
+                      <div key={i} className="flex gap-3 pl-1">
+                        <span className="text-accent font-bold shrink-0 mt-1">
                           &#x2022;
                         </span>
                         <p>{bulletMatch[1]}</p>
@@ -148,7 +149,7 @@ export default function DailyBriefing({ onClose }: DailyBriefingProps) {
                 })}
               </div>
               {data.article_count > 0 && (
-                <p className="text-caption text-ink-400 mt-6 pt-4 border-t border-ink-100">
+                <p className="text-caption text-ink-400 mt-8 pt-5 border-t border-ink-100 font-medium">
                   Based on {data.article_count} top stories
                   {data.generated_at && (
                     <>
